@@ -1,0 +1,38 @@
+{
+	"name": "Node.js & PostgreSQL",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"customizations": {
+	  "vscode": {
+		"extensions": [
+		  "dbaeumer.vscode-eslint",
+		  "esbenp.prettier-vscode",
+		  "ms-vscode.vscode-typescript-next",
+		  "ms-azuretools.vscode-docker",
+		  "ckolkman.vscode-postgres"
+		]
+	  }
+	},
+	"features": {
+	  "desktop-lite": {
+      "password": "vscode",
+      "webPort": "6080"
+    },
+	  "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+	  "ghcr.io/devcontainers/features/node:1": {
+    "version": "18"
+    },
+	"ghcr.io/devcontainers-community/npm-features/typescript:1": {
+		"version": "latest"
+	  }
+	},
+	"remoteEnv": {
+    "TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE": "/var/run/docker.sock",
+    "DOCKER_HOST": "unix:///var/run/docker.sock"
+   },
+
+	"forwardPorts": [3000, 5432,6080],
+	"postCreateCommand": "npm install",
+	"remoteUser": "node"
+  }

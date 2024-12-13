@@ -1,0 +1,4 @@
+#codegen.yml
+overwrite: true
+schema: "http://localhost:4000/graphql"
+documents: 
