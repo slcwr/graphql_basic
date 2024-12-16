@@ -1,0 +1,17 @@
+{
+    "overrides": [
+      {
+        "files": ["*.js", "*.ts"],
+        "options": {
+          "parser": "babel-ts"
+        }
+      },
+      {
+        "files": ["*.graphql", "*.gql"],
+        "options": {
+          "parser": "graphql"
+        }
+      }
+    ]
+  }
+  

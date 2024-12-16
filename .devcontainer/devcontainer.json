@@ -10,8 +10,13 @@
 		  "esbenp.prettier-vscode",
 		  "ms-vscode.vscode-typescript-next",
 		  "ms-azuretools.vscode-docker",
-		  "ckolkman.vscode-postgres"
-		]
+		  "ckolkman.vscode-postgres",
+		  "GraphQL.vscode-graphql" 
+		],
+		"settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+      }
 	  }
 	},
 	"features": {
@@ -33,6 +38,6 @@
    },
 
 	"forwardPorts": [3000, 5432,6080],
-	"postCreateCommand": "npm install",
+	// "postCreateCommand": "npm install",
 	"remoteUser": "node"
   }

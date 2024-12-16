@@ -1,4 +1,17 @@
-#codegen.yml
 overwrite: true
-schema: "http://localhost:4000/graphql"
-documents: 
+schema: 'http://localhost:3000/graphql'
+documents:
+  - 'graphql/mutations/*.graphql'
+  - 'graphql/queries/*.graphql'
+generates:
+  src/generated/:
+    preset: 'client'
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+    config:
+      withHooks: true
+  ./graphql.schema.json:
+    plugins:
+      - 'introspection'

@@ -1,7 +1,8 @@
-import { useMutation } from "@apollo/client";
+import { useMutation,useQuery } from "@apollo/client";
+import TodoQuery from "../../../graphql/queries/getTodoList.graphql";
 
 const TodoList: React.FC = () => {
-    const { data, loading } = useQuery(GET_TODOS);
+    const { data, loading } = useQuery(TodoQuery);
     const [ deleteTodo ] = useMutation(DELETE_TODO);
     const [ updateTodo ] = useMutation(UPDATE_TODO);
 
