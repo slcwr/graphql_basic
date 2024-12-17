@@ -1,7 +1,8 @@
 
 query GetTodos {
-  todoList {
+  todos {
     id
-    text
+    title
+    description
   }
 }

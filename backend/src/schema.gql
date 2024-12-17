@@ -2,12 +2,22 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Todo {
+type Todos {
   id: ID!
   title: String!
   description: String!
 }
 
 type Query {
-  users: [Todo!]!
+  todos: [Todos!]!
+}
+
+type Mutation {
+  createTodo(createTodoInput: CreateTodoInput!): Todos!
+  deleteTodo(id: ID!): Todos!
+}
+
+input CreateTodoInput {
+  title: String!
+  description: String!
 }

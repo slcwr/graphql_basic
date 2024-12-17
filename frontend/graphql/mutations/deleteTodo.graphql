@@ -1,3 +1,7 @@
-mutation DeleteTodo($id: String!) {
-    deleteTodo(deleteTodoInput: {id: $id})
+mutation DeleteTodo($id: ID!) {
+  deleteTodo(id: $id) {
+    id
+    title
+    description
+  }
 }

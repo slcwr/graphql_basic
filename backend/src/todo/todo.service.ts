@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -23,5 +24,31 @@ export class TodoService {
     return this.prismaService.todo.create({
       data,
     });
+  }
+
+  // async delete(id: number) {
+  //   return this.prismaService.todo.delete({
+  //     where: { id },
+  //   });
+  // }
+
+  async delete(id: number) {
+    try {
+      const todo = await this.prismaService.todo.delete({
+        where: { id },
+      });
+
+      if (!todo) {
+        throw new NotFoundException('Todo with ID ${id} not found');
+      }
+      return todo;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2025') {
+          throw new NotFoundException('Todo with ID ${id} not found');
+        }
+      }
+      throw error;
+    }
   }
 }
