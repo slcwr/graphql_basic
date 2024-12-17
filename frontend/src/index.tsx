@@ -4,14 +4,14 @@ import "./index.css";
 import App from "./App";
 import { ApolloProvider } from "@apollo/client";
 import client from "./apollo-client";
-import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
+import { ChakraProvider} from "@chakra-ui/react";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <ApolloProvider client={client}>
-    <ChakraProvider value={defaultSystem}>
+    <ChakraProvider>
       <App />
     </ChakraProvider>
   </ApolloProvider>

@@ -1,5 +1,13 @@
 import { useCreateTodoMutation } from "../../generated/graphql";
 import { useState } from "react";
+import {
+  FormControl,
+  FormLabel,
+  Button,
+  VStack,
+  HStack,
+  Heading,
+} from "@chakra-ui/react";
 
 const CreateTodo: React.FC = () => {
   const [createTodo] = useCreateTodoMutation();
@@ -29,21 +37,36 @@ const CreateTodo: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        name="title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="タイトル"
-      />
-      <input
-        type="text"
-        name="description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="説明"
-      />
-      <button type="submit">作成</button>
+      <VStack spacing={4}>
+        <Heading size="lg" color="blue.500">
+          TODO追加
+        </Heading>
+        <HStack spacing={4} align="flex-start">
+          <FormControl>
+            <input
+              type="text"
+              name="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="タイトルを入力"
+            />
+          </FormControl>
+
+          <FormControl>
+            <input
+              type="text"
+              name="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="説明を入力"
+            />
+          </FormControl>
+        </HStack>
+
+        <Button type="submit" colorScheme="blue">
+          作成
+        </Button>
+      </VStack>
     </form>
   );
 };
