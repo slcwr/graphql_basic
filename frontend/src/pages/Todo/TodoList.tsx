@@ -4,6 +4,7 @@ import { useUpdateTodoMutation } from "../../generated/graphql";
 import { useGetTodosQuery } from "../../generated/graphql";
 import { gql } from "@apollo/client";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { DragHandleIcon } from "@chakra-ui/icons";
 
 import {
   Container,
@@ -15,6 +16,7 @@ import {
   Editable,
   EditableInput,
   EditablePreview,
+  Box
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 
@@ -89,82 +91,83 @@ const TodoList: React.FC = () => {
     const items = Array.from(data.todos);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
-  }
-  
-    
-    
-
-    if (loading) return <div>Loading...</div>;
-
-    return (
-      <Container maxW="container.md" py={10}>
-        <VStack spacing={4} align="stretch">
-          <Text fontSize="2xl" fontWeight="bold" mb={4}>
-            Todo List
-          </Text>
-
-          {data?.todos && data.todos.length > 0 ? (
-            <DragDropContext onDragEnd={handleDragEnd}>
-              <Droppable droppableId="todos">
-                {(provided) => (
-                  <List
-                    spacing={3}
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
-                    {data.todos.map((todo, index) => (
-                      <Draggable
-                        key={todo.id}
-                        draggableId={todo.id}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <ListItem
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            p={4}
-                            bg="white"
-                            borderRadius="md"
-                            boxShadow="sm"
-                            display="flex"
-                            justifyContent="space-between"
-                            alignItems="center"
-                          >
-                            <Editable
-                              defaultValue={todo.title}
-                              onSubmit={(newTitle) =>
-                                handleEdit(newTitle, todo.id)
-                              }
-                            >
-                              <EditablePreview />
-                              <EditableInput />
-                            </Editable>
-                            <IconButton
-                              aria-label="Delete todo"
-                              icon={<DeleteIcon />}
-                              size="sm"
-                              colorScheme="red"
-                              variant="ghost"
-                              onClick={() => handleDelete(todo.id)}
-                            />
-                          </ListItem>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </List>
-                )}
-              </Droppable>
-            </DragDropContext>
-          ) : (
-            <Text color="gray.500" textAlign="center">
-              No todos found
-            </Text>
-          )}
-        </VStack>
-      </Container>
-    );
   };
+
+  if (loading) return <div>Loading...</div>;
+
+  return (
+    <Container maxW="container.md" py={10}>
+      <VStack spacing={4} align="stretch">
+        <Text fontSize="2xl" fontWeight="bold" mb={4}>
+          Todo List
+        </Text>
+
+        {data?.todos && data.todos.length > 0 ? (
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="todos">
+              {(provided) => (
+                <List
+                  spacing={3}
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  {data.todos.map((todo, index) => (
+                    <Draggable
+                      key={todo.id}
+                      draggableId={todo.id}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <ListItem
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          p={4}
+                          bg="white"
+                          borderRadius="md"
+                          boxShadow="sm"
+                          display="flex"
+                          justifyContent="space-between"
+                          alignItems="center"
+                        >
+                          <Box {...provided.dragHandleProps} mr={2}>
+                            <DragHandleIcon />
+                          </Box>
+                          <Editable
+                            defaultValue={todo.title}
+                            onSubmit={(newTitle) =>
+                              handleEdit(newTitle, todo.id)
+                            }
+                            isPreviewFocusable={true}
+                            submitOnBlur={true}
+                          >
+                            <EditablePreview cursor="text" />
+                            <EditableInput />
+                          </Editable>
+                          <IconButton
+                            aria-label="Delete todo"
+                            icon={<DeleteIcon />}
+                            size="sm"
+                            colorScheme="red"
+                            variant="ghost"
+                            onClick={() => handleDelete(todo.id)}
+                          />
+                        </ListItem>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </List>
+              )}
+            </Droppable>
+          </DragDropContext>
+        ) : (
+          <Text color="gray.500" textAlign="center">
+            No todos found
+          </Text>
+        )}
+      </VStack>
+    </Container>
+  );
+};
 
 export default TodoList;
