@@ -5,6 +5,7 @@ import { useGetTodosQuery } from "../../generated/graphql";
 import { gql } from "@apollo/client";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { DragHandleIcon } from "@chakra-ui/icons";
+import { useCreateTodoModal } from "../../hooks/useCreateTodoModal";
 
 import {
   Container,
@@ -16,11 +17,13 @@ import {
   Editable,
   EditableInput,
   EditablePreview,
-  Box
+  Box,
+  Flex
 } from "@chakra-ui/react";
-import { DeleteIcon } from "@chakra-ui/icons";
+import { DeleteIcon,AddIcon } from "@chakra-ui/icons";
 
 const TodoList: React.FC = () => {
+  const { Modal, onOpen } = useCreateTodoModal(); 
   const { data, loading } = useGetTodosQuery();
   const [deleteTodo] = useDeleteTodoMutation();
   const [updateTodo] = useUpdateTodoMutation();
@@ -98,9 +101,14 @@ const TodoList: React.FC = () => {
   return (
     <Container maxW="container.md" py={10}>
       <VStack spacing={4} align="stretch">
-        <Text fontSize="2xl" fontWeight="bold" mb={4}>
-          Todo List
-        </Text>
+        <Flex justify="space-between" align="center">
+        <center>
+          <Text fontSize="2xl" fontWeight="bold">
+            Todo List
+          </Text>
+          </center>
+          
+        </Flex>
 
         {data?.todos && data.todos.length > 0 ? (
           <DragDropContext onDragEnd={handleDragEnd}>
@@ -165,6 +173,13 @@ const TodoList: React.FC = () => {
             No todos found
           </Text>
         )}
+       <Modal />
+       <IconButton
+            aria-label="Add todo"
+            icon={<AddIcon />}
+            onClick={onOpen}
+            colorScheme="blue"
+          />
       </VStack>
     </Container>
   );
