@@ -2,6 +2,9 @@ import React from "react";
 import { useDeleteTodoMutation } from "../../generated/graphql";
 import { useUpdateTodoMutation } from "../../generated/graphql";
 import { useGetTodosQuery } from "../../generated/graphql";
+import { gql } from "@apollo/client";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+
 import {
   Container,
   VStack,
@@ -50,67 +53,118 @@ const TodoList: React.FC = () => {
             title: newTitle,
           },
         },
+        update: (cache, { data }) => {
+          cache.modify({
+            fields: {
+              todos(existingTodos = [], { readField }) {
+                return existingTodos.map((todoRef: any) => {
+                  if (id === readField("id", todoRef)) {
+                    return cache.writeFragment({
+                      id: cache.identify(todoRef),
+                      fragment: gql`
+                        fragment UpdatedTodo on Todo {
+                          title
+                        }
+                      `,
+                      data: {
+                        title: newTitle,
+                      },
+                    });
+                  }
+                  return todoRef;
+                });
+              },
+            },
+          });
+        },
       });
     } catch (error) {
       console.error("Update error:", error);
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  const handleDragEnd = (result: any) => {
+    if (!result.destination || !data?.todos) return;
 
-  return (
-    <Container maxW="container.md" py={10}>
-      <VStack spacing={4} align="stretch">
-        <Text fontSize="2xl" fontWeight="bold" mb={4}>
-          Todo List
-        </Text>
+    const items = Array.from(data.todos);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+  }
+  
+    
+    
 
-        {data?.todos && data.todos.length > 0 ? (
-          <List spacing={3}>
-            {data.todos.map((todo) => (
-              <ListItem
-                key={todo.id}
-                p={4}
-                bg="white"
-                borderRadius="md"
-                boxShadow="sm"
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Editable
-                  defaultValue={todo.title}
-                  onSubmit={(newTitle) => handleEdit(newTitle, todo.id)}
-                  isPreviewFocusable={true}
-                  selectAllOnFocus={false}
-                >
-                  <EditablePreview
-                    px={2}
-                    _hover={{
-                      background: "gray.100",
-                    }}
-                  />
-                  <EditableInput px={2} />
-                </Editable>
-                <IconButton
-                  aria-label="Delete todo"
-                  icon={<DeleteIcon />}
-                  size="sm"
-                  colorScheme="red"
-                  variant="ghost"
-                  onClick={() => handleDelete(todo.id)}
-                />
-              </ListItem>
-            ))}
-          </List>
-        ) : (
-          <Text color="gray.500" textAlign="center">
-            No todos found
+    if (loading) return <div>Loading...</div>;
+
+    return (
+      <Container maxW="container.md" py={10}>
+        <VStack spacing={4} align="stretch">
+          <Text fontSize="2xl" fontWeight="bold" mb={4}>
+            Todo List
           </Text>
-        )}
-      </VStack>
-    </Container>
-  );
-};
+
+          {data?.todos && data.todos.length > 0 ? (
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="todos">
+                {(provided) => (
+                  <List
+                    spacing={3}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    {data.todos.map((todo, index) => (
+                      <Draggable
+                        key={todo.id}
+                        draggableId={todo.id}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <ListItem
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            p={4}
+                            bg="white"
+                            borderRadius="md"
+                            boxShadow="sm"
+                            display="flex"
+                            justifyContent="space-between"
+                            alignItems="center"
+                          >
+                            <Editable
+                              defaultValue={todo.title}
+                              onSubmit={(newTitle) =>
+                                handleEdit(newTitle, todo.id)
+                              }
+                            >
+                              <EditablePreview />
+                              <EditableInput />
+                            </Editable>
+                            <IconButton
+                              aria-label="Delete todo"
+                              icon={<DeleteIcon />}
+                              size="sm"
+                              colorScheme="red"
+                              variant="ghost"
+                              onClick={() => handleDelete(todo.id)}
+                            />
+                          </ListItem>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </List>
+                )}
+              </Droppable>
+            </DragDropContext>
+          ) : (
+            <Text color="gray.500" textAlign="center">
+              No todos found
+            </Text>
+          )}
+        </VStack>
+      </Container>
+    );
+  };
 
 export default TodoList;
