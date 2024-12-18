@@ -1,5 +1,6 @@
 import React from "react";
 import { useDeleteTodoMutation } from "../../generated/graphql";
+import { useUpdateTodoMutation } from "../../generated/graphql";
 import { useGetTodosQuery } from "../../generated/graphql";
 import {
   Container,
@@ -8,12 +9,16 @@ import {
   List,
   ListItem,
   IconButton,
+  Editable,
+  EditableInput,
+  EditablePreview,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 
 const TodoList: React.FC = () => {
   const { data, loading } = useGetTodosQuery();
   const [deleteTodo] = useDeleteTodoMutation();
+  const [updateTodo] = useUpdateTodoMutation();
   //ID型を使用する場合はフロントではstring型で定義する（シリアライズされるときにstringになる）
   const handleDelete = async (id: string) => {
     try {
@@ -36,6 +41,21 @@ const TodoList: React.FC = () => {
     }
   };
 
+  const handleEdit = async (newTitle: string, id: string) => {
+    try {
+      await updateTodo({
+        variables: {
+          id,
+          updateTodoInput: {
+            title: newTitle,
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Update error:", error);
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -44,7 +64,7 @@ const TodoList: React.FC = () => {
         <Text fontSize="2xl" fontWeight="bold" mb={4}>
           Todo List
         </Text>
-        
+
         {data?.todos && data.todos.length > 0 ? (
           <List spacing={3}>
             {data.todos.map((todo) => (
@@ -58,7 +78,20 @@ const TodoList: React.FC = () => {
                 justifyContent="space-between"
                 alignItems="center"
               >
-                <Text>{todo.title}</Text>
+                <Editable
+                  defaultValue={todo.title}
+                  onSubmit={(newTitle) => handleEdit(newTitle, todo.id)}
+                  isPreviewFocusable={true}
+                  selectAllOnFocus={false}
+                >
+                  <EditablePreview
+                    px={2}
+                    _hover={{
+                      background: "gray.100",
+                    }}
+                  />
+                  <EditableInput px={2} />
+                </Editable>
                 <IconButton
                   aria-label="Delete todo"
                   icon={<DeleteIcon />}
@@ -78,8 +111,6 @@ const TodoList: React.FC = () => {
       </VStack>
     </Container>
   );
-  
-  
-}
+};
 
 export default TodoList;

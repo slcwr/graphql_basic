@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateTodoInput } from '../todo/dto/update-todo.input';
 
 @Injectable()
 export class TodoService {
@@ -26,11 +27,21 @@ export class TodoService {
     });
   }
 
-  // async delete(id: number) {
-  //   return this.prismaService.todo.delete({
+  // async update(id: number; title?: string ) {
+  //   return this.prismaService.todo.update({
   //     where: { id },
   //   });
   // }
+
+  async update(id: number, updateTodoInput: UpdateTodoInput) {
+    return this.prismaService.todo.update({
+      where: { id },
+      data: {
+        title: updateTodoInput.title,
+        description: updateTodoInput.description,
+      },
+    });
+  }
 
   async delete(id: number) {
     try {
