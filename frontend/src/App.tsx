@@ -1,18 +1,21 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import TodoList from './pages/Todo/TodoList';
-import CreateTodo from './pages/Todo/CreateTodo';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { ErrorAlert } from './components/common/ErrorAlert';
 
 
 
 function App() {
   return (
+    <ErrorBoundary>
+      <ErrorAlert />
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<TodoList />} />
-        <Route path="/create" element={<CreateTodo />} />
       </Routes>
     </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

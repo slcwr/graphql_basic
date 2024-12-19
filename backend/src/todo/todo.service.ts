@@ -27,12 +27,6 @@ export class TodoService {
     });
   }
 
-  // async update(id: number; title?: string ) {
-  //   return this.prismaService.todo.update({
-  //     where: { id },
-  //   });
-  // }
-
   async update(id: number, updateTodoInput: UpdateTodoInput) {
     return this.prismaService.todo.update({
       where: { id },
